@@ -5,7 +5,7 @@ import "./Navbar.css"
 const Navbar = () => {
   return (
     <>
-    <div className='h-17 w-1/1 bg-gray-200 p-3 flex gap-3 border-b-4 border-b-white shadow-sm items-center '>
+    <div className='h-17 w-1/1 bg-gray-200 p-3 flex gap-3 border-b-4 border-b-white shadow-sm items-center sticky top-0'>
       <img src="/svg/vite.svg" alt="Search icon" className='size-12 ml-1' />
 
       <div className="inline-flex relative">
@@ -35,7 +35,7 @@ const Navbar = () => {
 
       <div className=' flex'>
         <p className=' mt-3'>ENGLISH</p>
-        <img src="/svg/down.svg" alt="^" className=' mt-1 w-6 ' />
+        <img src="/svg/down.svg" alt="^" className=' mt-1  ' />
       </div>
 
       <div className=' flex hover:bg-[rgb(211,228,248)] mt-1 size-10 rounded-full hover:transition hover:duration-400 transition duration-400 cursor-pointer'>
