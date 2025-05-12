@@ -8,12 +8,12 @@ import Postad from './pages/Postad/Postad'
 const App = () => {
   return (
     <BrowserRouter>
-      <Navbar />
+      {/* <Navbar /> */}
       <Routes>
-        <Route path='/' element={<Home />} />
-        {/* <Route path='/' element={<Postad />} /> */}
+        {/* <Route path='/' element={<Home />} /> */}
+        <Route path='/' element={<Postad />} />
       </Routes>
-      <Footer />
+      {/* <Footer /> */}
     </BrowserRouter>
   )
 }

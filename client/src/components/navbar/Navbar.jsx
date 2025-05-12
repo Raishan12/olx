@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import "./Navbar.css"
 
 const Navbar = () => {
+  const [location, setLocation] = useState("India")
   return (
     <>
     <div className='h-17 w-1/1 bg-gray-200 p-3 flex gap-3 border-b-4 border-b-white shadow-sm items-center sticky top-0'>
@@ -13,7 +14,8 @@ const Navbar = () => {
           type="search"
           name="location"
           id="location"
-          value="India"
+          value={location}
+          onChange={(e)=>setLocation(e.target.value)}
           className='border-solid border-2 rounded bg-white h-12 pl-8 bg-[url("/svg/search.svg")] bg-no-repeat bg-position-[4px]'
         />
       </div>
