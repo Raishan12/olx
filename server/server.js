@@ -1,6 +1,8 @@
 import express from "express"
 import connection from "./connection.js"
 import env from "dotenv"
+import path from 'path'
+import url from "url"
 
 env.config()
 
@@ -8,8 +10,22 @@ const PORT = process.env.PORT
 
 const app = express()
 
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+app.use(express.json({limit:"100mb"}))
+app.use(cors())
+app.use(express.static(path.join(__dirname, "images")))
+
+
+
+app.use("/api/olx", olxRoutes)
+
+
+
+
 connection().then(() => {
     app.listen(PORT, () => {
         console.log(`server running at http://localhost:${PORT}`)
     })
-}).catch((err) => console.log(err))
+}).catch((error) => console.log(error))
