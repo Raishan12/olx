@@ -25,47 +25,11 @@ const Postad = () => {
                         </div>
 
                         <div className=' bg-white '>
-                            <p>Properties</p>
-                        </div>
-
-                        <div className=' bg-white '>
                             <p>Mobiles</p>
                         </div>
 
                         <div className=' bg-white '>
-                            <p>Jobs</p>
-                        </div>
-
-                        <div className=' bg-white '>
                             <p>Bikes</p>
-                        </div>
-
-                        <div className=' bg-white '>
-                            <p>Electronics & Appliances</p>
-                        </div>
-
-                        <div className=' bg-white '>
-                            <p>Commercial Vehicles & Spares</p>
-                        </div>
-
-                        <div className=' bg-white '>
-                            <p>Furniture</p>
-                        </div>
-
-                        <div className=' bg-white '>
-                            <p>Fashion</p>
-                        </div>
-
-                        <div className=' bg-white '>
-                            <p>Books, Sports & Hobbies</p>
-                        </div>
-
-                        <div className=' bg-white '>
-                            <p>Pets</p>
-                        </div>
-
-                        <div className=' bg-white '>
-                            <p>Services</p>
                         </div>
 
                     </div>
