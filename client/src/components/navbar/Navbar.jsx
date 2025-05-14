@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth0 } from "@auth0/auth0-react";
 import LoginButton from '../../pages/login/Login'
 import LogoutButton from '../../pages/logout/Logout'
+import axios from 'axios';
 
 const Navbar = () => {
   const [locationval, setLocation] = useState("India")
@@ -10,6 +11,28 @@ const Navbar = () => {
   const [isDropDown, setIsDropDown] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const [ userdata, setUserdata ] = useState({
+    username : '',
+    email : ''
+  })
+
+  const goToBackend = async (userData) => {
+    try {
+      const res = await axios.post("http://localhost:7000/api/olx/signup", userData)
+      console.log(res.data.id)
+      localStorage.setItem("id", res.data.id)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const userData = { username: user.name, email: user.email };
+      setUserdata(userData);
+      goToBackend(userData);
+    }
+  }, [isAuthenticated, user]); 
 
 
   return (

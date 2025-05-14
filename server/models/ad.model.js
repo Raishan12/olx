@@ -2,13 +2,15 @@ import mongoose from "mongoose"
 
 const adSchema = new mongoose.Schema({
     photos: { type: Array, required: true },
-    title: { type: String, required: true },
+    name: { type: String, required: true },
+    adtitle: { type: String, required: true },
     brand: { type: String, required: true },
+    category: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: String, required: true },
     fuel: { type: String, default: null },
     kilometers: { type: String, default: null },
-    location: { type: String, default: null },
+    location: { type: Array, default: null },
     owner: { type: String, default: null },
     gear: { type: String, default: null },
     model: { type: String, default: null },

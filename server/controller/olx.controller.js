@@ -9,21 +9,24 @@ export const signup = async (req, res) => {
 
     console.log(req.body);
 
-    console.log(req.file.filename)
-    
-    const profilepicture = req.file.filename
-    
     console.log("add user in controller");
-    const {  username, email, phone, password } = req.body
-    if (!(profilepicture && username && email && phone && password)) {
-        return res.status(404).send({ error: "please fill all fields" })
+    const {  username, email } = req.body
+
+
+    if (!(username && email)) {
+      return res.status(404).send({ error: "Email or Username is incorrect" })
+  }
+
+    const userExist = await userSchema.findOne({email})
+
+    if(userExist) {
+      return res.status(200).send({ success: "succesfully loggedin", id:userExist._id })
+
     }
 
-    bcrypt.hash(password, 10).then(async (hashedpwd) => {
-        console.log(hashedpwd)
-        const data = await userSchema.create({ profilepicture, username, email, phone, password: hashedpwd })
-        res.status(201).send(data)
-    })
+    const data = await userSchema.create({ username, email })
+    res.status(201).send({id:data._id})
+
   } catch (error) {
     console.log({errorMessage: error})
     res.status(500).send(error)
@@ -35,11 +38,9 @@ export const signup = async (req, res) => {
 export const uploadads = async(req, res) => {
     try {
         console.log("uploadads fn");
+        console.log(req.body)
     
-        const { title, brand, description, location, price, category } = req.body;
         const { user_id } = req.params
-        
-        // console.log(req.files)
 
         let photos = []
 
@@ -47,15 +48,33 @@ export const uploadads = async(req, res) => {
           photos.push(file.filename)
         })
 
+        const content = { 
+          photos,
+          name: req.body.carName,
+          brand: req.body.brand,
+          model: req.body.year,
+          fuel: req.body.fuel,
+          gear: req.body.transmission,
+          owner: req.body.noOfOwners,
+          adtitle: req.body.adTitle,
+          description: req.body.description,
+          price: req.body.price,
+          kilometers: req.body.kmDriven,
+          category: req.body.category,
+          location: {
+            state: req.body.location.state,
+            city: req.body.location.city,
+            neighbourhood: req.body.location.neighborhood
+          },
+          user_id
+        }
+
         if(photos == []){
           return res.status(400).json({ message: "Missing required fields" });
         }
-  
-        if (!(title && brand && description && location && price && category)) {
-          return res.status(400).json({ message: "Missing required fields" });
-        }
+
     
-        const data = await adSchema.create({ title, brand, description, location, category, price, photos, user_id})
+        const data = await adSchema.create({ ...content, photos })
   
         res.status(201).json({ message: "Posted successfully", data });
       } catch (error) {
@@ -66,7 +85,7 @@ export const uploadads = async(req, res) => {
 
 export const getads = async(req, res) => {
   try {
-    const data = await adSchema.find()
+    const data = await adSchema.find().sort({date:-1})
     .populate('user_id', '_id username profilepicture')
     if(!data){
       return res.status(404).send("Data not found")
@@ -76,5 +95,16 @@ export const getads = async(req, res) => {
   } catch (error) {
     console.error("Upload error:", error);
     res.status(500).json({ message: "upload failed", error });
+  }
+}
+
+export const getproduct = async (req, res) => {
+  try {
+    const { pid } = req.params
+
+    const data = await adSchema.findById({_id:pid})
+    res.status(200).send(data)
+  } catch (error) {
+    res.status(500).send(error)
   }
 }
