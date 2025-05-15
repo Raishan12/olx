@@ -1,14 +1,15 @@
-import express from "express"
-import upload from "../multer/multer.config.js"
-import auth from "../middleware/auth.js"
-import { getads, getproduct, signup, uploadads } from "../controller/olx.controller.js"
+import express from "express";
+import upload from "../multer/multer.config.js";
+import auth from "../middleware/auth.js";
+import { getads, getproduct, signup, uploadads, toggleWishlist, getWishlist } from "../controller/olx.controller.js";
 
-const olxRoutes = express.Router()
+const olxRoutes = express.Router();
 
-olxRoutes.post("/uploadads/:user_id", upload.array('file'),uploadads)
-olxRoutes.post("/signup", signup)
-olxRoutes.get("/getads", getads)
-olxRoutes.get("/getproduct/:pid", getproduct)
+olxRoutes.post("/uploadads/:user_id", upload.array("file"), uploadads);
+olxRoutes.post("/signup", signup);
+olxRoutes.get("/getads", getads);
+olxRoutes.get("/getproduct/:pid", getproduct);
+olxRoutes.post("/toggleWishlist/:user_id/:product_id", toggleWishlist);
+olxRoutes.get("/getWishlist/:user_id", getWishlist);
 
-
-export default olxRoutes
+export default olxRoutes;

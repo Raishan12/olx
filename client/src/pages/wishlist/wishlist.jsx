@@ -2,36 +2,29 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Home = ({ searchResults }) => {
-  const [allData, setAllData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+const Wishlist = () => {
+  const [wishlistData, setWishlistData] = useState([]);
+  const [wishlistIds, setWishlistIds] = useState([]); // Track wishlist item IDs
   const [currentPage, setCurrentPage] = useState(1);
-  const [wishlist, setWishlist] = useState([]); // Track user's wishlist
   const itemsPerPage = 8;
 
   const navigate = useNavigate();
-
-  async function loadData() {
-    try {
-      const res = await axios.get('http://localhost:7000/api/olx/getads');
-      setAllData(res.data);
-    } catch (error) {
-      console.log({ message: 'Load function error', error });
-    }
-  }
 
   // Fetch user's wishlist
   async function loadWishlist() {
     try {
       const user_id = localStorage.getItem('id');
-      if (!user_id) return;
+      if (!user_id) {
+        alert('Please log in to view your wishlist');
+        return;
+      }
 
       const res = await axios.get(`http://localhost:7000/api/olx/getWishlist/${user_id}`);
-      setWishlist(res.data.wishlist.map((item) => item._id.toString()));
+      setWishlistData(res.data.wishlist);
+      setWishlistIds(res.data.wishlist.map((item) => item._id.toString()));
     } catch (error) {
       console.log({ message: 'Load wishlist error', error });
+      alert('Failed to load wishlist');
     }
   }
 
@@ -44,14 +37,18 @@ const Home = ({ searchResults }) => {
         return;
       }
 
-      const isWishlisted = wishlist.includes(productId);
+      const isWishlisted = wishlistIds.includes(productId);
       const res = await axios.post(`http://localhost:7000/api/olx/toggleWishlist/${user_id}/${productId}`);
 
       if (res.status === 200) {
         if (isWishlisted) {
-          setWishlist(wishlist.filter((id) => id !== productId));
+          setWishlistData(wishlistData.filter((item) => item._id.toString() !== productId));
+          setWishlistIds(wishlistIds.filter((id) => id !== productId));
         } else {
-          setWishlist([...wishlist, productId]);
+          // Fetch the product to add to wishlistData
+          const productRes = await axios.get(`http://localhost:7000/api/olx/getproduct/${productId}`);
+          setWishlistData([...wishlistData, productRes.data]);
+          setWishlistIds([...wishlistIds, productId]);
         }
       }
     } catch (error) {
@@ -59,41 +56,6 @@ const Home = ({ searchResults }) => {
       alert('Failed to update wishlist');
     }
   }
-
-  const filterData = (query) => {
-    if (!query || query.trim() === '') {
-      setIsSearching(false);
-      setSearchTerm('');
-      setCurrentPage(1);
-      return;
-    }
-
-    const searchTermLower = query.toLowerCase();
-    const filtered = allData.filter((item) => {
-      return (
-        (item.adtitle && item.adtitle.toLowerCase().includes(searchTermLower)) ||
-        (item.description && item.description.toLowerCase().includes(searchTermLower)) ||
-        (item.category && item.category.toLowerCase().includes(searchTermLower)) ||
-        (item.location &&
-          item.location[0]?.city &&
-          item.location[0].city.toLowerCase().includes(searchTermLower)) ||
-        (item.location &&
-          item.location[0]?.neighbourhood &&
-          item.location[0].neighbourhood.toLowerCase().includes(searchTermLower))
-      );
-    });
-
-    setFilteredData(filtered);
-    setIsSearching(true);
-    setSearchTerm(query);
-    setCurrentPage(1);
-  };
-
-  const clearSearch = () => {
-    setIsSearching(false);
-    setSearchTerm('');
-    setCurrentPage(1);
-  };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -104,26 +66,17 @@ const Home = ({ searchResults }) => {
   };
 
   const getPaginatedData = () => {
-    const data = isSearching ? filteredData : allData;
     const start = (currentPage - 1) * itemsPerPage;
-    return data.slice(start, start + itemsPerPage);
+    return wishlistData.slice(start, start + itemsPerPage);
   };
 
   const getTotalPages = () => {
-    const dataLength = isSearching ? filteredData.length : allData.length;
-    return Math.ceil(dataLength / itemsPerPage);
+    return Math.ceil(wishlistData.length / itemsPerPage);
   };
 
   useEffect(() => {
-    loadData();
     loadWishlist();
   }, []);
-
-  useEffect(() => {
-    if (typeof searchResults === 'string') {
-      filterData(searchResults);
-    }
-  }, [searchResults, allData]);
 
   const paginatedData = getPaginatedData();
   const totalPages = getTotalPages();
@@ -132,32 +85,21 @@ const Home = ({ searchResults }) => {
     <div className="home-container mx-auto px-4 sm:px-6 lg:px-8 my-6 sm:my-8 lg:my-10 max-w-7xl">
       <div>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
-            {isSearching
-              ? `Search Results for "${searchTerm}"`
-              : 'Fresh recommendations'}
+          <h2 className="text-xl sm:text-2xl lg:text-xl font-light underline underline-offset-12 decoration-1">
+            Wishlist
           </h2>
-
-          {isSearching && (
-            <button
-              className="mt-2 sm:mt-0 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
-              onClick={clearSearch}
-            >
-              Show All Products
-            </button>
-          )}
         </div>
 
-        {isSearching && filteredData.length === 0 && (
+        {wishlistData.length === 0 && (
           <div className="text-center py-8 sm:py-10 bg-gray-100 rounded-lg">
             <p className="text-lg sm:text-xl text-gray-500">
-              No products found matching "{searchTerm}"
+              Your wishlist is empty
             </p>
             <button
-              className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
-              onClick={clearSearch}
+              className="mt-4 bg-blue-500 hover:bg-white hover:text-blue-500 hover:border hover:border-2 hover:border=blue-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
+              onClick={() => navigate('/')}
             >
-              Show All Products
+              Discover
             </button>
           </div>
         )}
@@ -177,9 +119,9 @@ const Home = ({ searchResults }) => {
                 }}
               >
                 <img
-                  src={wishlist.includes(card._id) ? '/png/wished.png' : '/png/wish.png'}
+                  src={wishlistIds.includes(card._id) ? '/png/wished.png' : '/png/wish.png'}
                   alt="wishlist"
-                  className='size-4.5'
+                  className="size-4.5"
                 />
               </div>
               <img
@@ -202,7 +144,7 @@ const Home = ({ searchResults }) => {
           ))}
         </div>
 
-        {paginatedData.length === 0 && !isSearching && (
+        {paginatedData.length === 0 && wishlistData.length > 0 && (
           <div className="text-center py-6 sm:py-8">
             <p className="text-lg sm:text-xl text-gray-500">No products available</p>
           </div>
@@ -247,4 +189,4 @@ const Home = ({ searchResults }) => {
   );
 };
 
-export default Home;
+export default Wishlist;

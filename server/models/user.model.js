@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     email:{type:String, required:true},
     phone:{type:String, default: null},
     password:{type:String, deafult: null},
-    wishlist:{type:Array, default: null},
+    wishlist:{type: [{type: mongoose.Schema.Types.ObjectId, ref: "Ad"}], default: []},
     otp:{type:Number, default:null}
 })
 

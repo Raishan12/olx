@@ -9,9 +9,11 @@ const Preview = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mainImage, setMainImage] = useState('');
+  const [isWishlisted, setIsWishlisted] = useState(false); 
 
   useEffect(() => {
     console.log('Product ID from params:', productId);
+
     const fetchProduct = async () => {
       if (!productId) {
         setError('Invalid product ID');
@@ -35,11 +37,43 @@ const Preview = () => {
       }
     };
 
+    const fetchWishlist = async () => {
+      try {
+        const user_id = localStorage.getItem('id');
+        if (!user_id) return;
+
+        const res = await axios.get(`http://localhost:7000/api/olx/getWishlist/${user_id}`);
+        const wishlistIds = res.data.wishlist.map((item) => item._id.toString());
+        setIsWishlisted(wishlistIds.includes(productId));
+      } catch (error) {
+        console.log({ message: 'Load wishlist error', error });
+      }
+    };
+
     fetchProduct();
+    fetchWishlist();
   }, [productId]);
 
   const handleImageClick = (image) => {
     setMainImage(`http://localhost:7000/images/${image}`);
+  };
+
+  const handleWishlistToggle = async () => {
+    try {
+      const user_id = localStorage.getItem('id');
+      if (!user_id) {
+        alert('Please log in to add to wishlist');
+        return;
+      }
+
+      const res = await axios.post(`http://localhost:7000/api/olx/toggleWishlist/${user_id}/${productId}`);
+      if (res.status === 200) {
+        setIsWishlisted(!isWishlisted);
+      }
+    } catch (error) {
+      console.error('Wishlist toggle error:', error);
+      alert('Failed to update wishlist');
+    }
   };
 
   const handleContactSeller = () => {
@@ -84,10 +118,8 @@ const Preview = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-3">
-          {/* Breadcrumbs */}
           <div className="text-sm text-gray-600 mb-2">
             <span
               className="cursor-pointer hover:underline"
@@ -101,7 +133,6 @@ const Preview = () => {
             </span>{' '}
             &gt; <span>{product.adtitle}</span>
           </div>
-          {/* Action Buttons */}
           <div className="flex justify-between items-center">
             <button
               onClick={() => navigate(-1)}
@@ -140,16 +171,13 @@ const Preview = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-6 max-w-6xl">
-      <div className="banner">
-              <img src="/banner_copy.png" alt="banner" className="w-full" />
-            </div>
+        <div className="banner">
+          <img src="/banner_copy.png" alt="banner" className="w-full" />
+        </div>
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left Column: Image Gallery */}
           <div className="w-full lg:w-2/3">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              {/* Main Image */}
               <div className="relative">
                 <img
                   src={
@@ -158,8 +186,17 @@ const Preview = () => {
                   alt={product.adtitle}
                   className="w-full h-[400px] object-contain rounded-lg"
                 />
+                <div
+                  className="wishbutton absolute bg-white p-1 rounded-full right-6 top-4"
+                  onClick={handleWishlistToggle}
+                >
+                  <img
+                    src={isWishlisted ? '/png/wished.png' : '/png/wish.png'}
+                    alt="wishlist"
+                    className="size-4.5"
+                  />
+                </div>
               </div>
-              {/* Thumbnails */}
               {product.photos && product.photos.length > 1 && (
                 <div className="flex gap-2 mt-4 overflow-x-auto">
                   {product.photos.map((photo, index) => (
@@ -180,16 +217,13 @@ const Preview = () => {
             </div>
           </div>
 
-          {/* Right Column: Product Details */}
           <div className="w-full lg:w-1/3">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              {/* Price and Title */}
               <h1 className="text-2xl font-bold text-gray-800">
                 ₹ {product.price.toLocaleString()}
               </h1>
               <h2 className="text-lg text-gray-600 mt-1">{product.adtitle}</h2>
 
-              {/* Location and Date */}
               <div className="text-sm text-gray-500 mt-2">
                 <p>
                   {product.location[0].neighbourhood}, {product.location[0].city},{' '}
@@ -200,7 +234,6 @@ const Preview = () => {
                 </p>
               </div>
 
-              {/* Action Buttons */}
               <div className="mt-4 space-y-2">
                 <button
                   onClick={handleCallSeller}
@@ -217,7 +250,6 @@ const Preview = () => {
               </div>
             </div>
 
-            {/* Seller Info */}
             <div className="bg-white rounded-lg shadow-sm p-4 mt-4">
               <h3 className="text-lg font-semibold text-gray-800">
                 Seller Information
@@ -228,12 +260,10 @@ const Preview = () => {
               <p className="text-gray-600">
                 Member since: <span className="font-medium">Not available</span>
               </p>
-              {/* Update with actual seller data if available */}
             </div>
           </div>
         </div>
 
-        {/* Details Section */}
         <div className="bg-white rounded-lg shadow-sm p-4 mt-6">
           <h3 className="text-lg font-semibold text-gray-800">Details</h3>
           <div className="grid grid-cols-2 gap-4 mt-2 text-gray-600">
