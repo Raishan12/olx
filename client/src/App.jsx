@@ -10,6 +10,9 @@ import Preview from './pages/preview/Preview'
 import Nav from './components/nav/nav'
 import Bike from './pages/Postad/sub/Bike'
 import Wishlist from './pages/wishlist/wishlist'
+import Categories from './pages/categories/Categories'
+import Viewprofile from './pages/viewprofile/Viewprofile'
+import Editprofiledetails from './pages/editprofile/Editprofiledetails'
 
 const App = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -39,6 +42,9 @@ const App = () => {
           <Route path='/bike' element={<Bike />} />
           <Route path='/preview/:productId' element={<Preview />} />
           <Route path='/wishlist' element={<Wishlist />} />
+          <Route path="/categories/:category" element={<Categories />} />
+          <Route path='/profile' element={<Viewprofile />} />
+          <Route path="/editprofiledetails" element={<Editprofiledetails />} />
           </Routes>
         <Footer />
       {/* </BrowserRouter> */}

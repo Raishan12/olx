@@ -9,7 +9,10 @@ const Preview = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mainImage, setMainImage] = useState('');
-  const [isWishlisted, setIsWishlisted] = useState(false); 
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
+  const [offerPrice, setOfferPrice] = useState('');
+  const [offerError, setOfferError] = useState('');
 
   useEffect(() => {
     console.log('Product ID from params:', productId);
@@ -54,6 +57,13 @@ const Preview = () => {
     fetchWishlist();
   }, [productId]);
 
+  // Set initial offer price once product is fetched
+  useEffect(() => {
+    if (product) {
+      setOfferPrice(product.price.toString());
+    }
+  }, [product]);
+
   const handleImageClick = (image) => {
     setMainImage(`http://localhost:7000/images/${image}`);
   };
@@ -81,7 +91,54 @@ const Preview = () => {
   };
 
   const handleCallSeller = () => {
-    alert('Call seller functionality to be implemented');
+    setIsOfferModalOpen(true);
+  };
+
+  const handleMakeOfferSubmit = async () => {
+    try {
+      const user_id = localStorage.getItem('id');
+      if (!user_id) {
+        alert('Please log in to make an offer');
+        return;
+      }
+
+      const res = await axios.post(`http://localhost:7000/api/olx/makeOffer`, {
+        userId: user_id,
+        productId,
+        offerPrice: parseFloat(offerPrice),
+      });
+
+      if (res.status === 200) {
+        alert('Offer submitted successfully and emails sent!');
+        setIsOfferModalOpen(false);
+        setOfferPrice(product.price.toString()); // Reset to original price
+        setOfferError('');
+      }
+    } catch (error) {
+      console.error('Make offer error:', error);
+      alert('Failed to submit offer');
+    }
+  };
+
+  const handleOfferPriceChange = (e) => {
+    const value = e.target.value;
+    setOfferPrice(value);
+
+    if (!product || !value) {
+      setOfferError('');
+      return;
+    }
+
+    const price = parseFloat(product.price);
+    const offer = parseFloat(value);
+    const maxOffer = price * 1.1; // 10% above the real price
+    const minOffer = price * 0.9; // 10% below the real price
+
+    if (offer > maxOffer || offer < minOffer) {
+      setOfferError('Offer must be within 10% of the real price');
+    } else {
+      setOfferError('');
+    }
   };
 
   const handleShare = () => {
@@ -128,10 +185,10 @@ const Preview = () => {
               OLX
             </span>{' '}
             &gt;{' '}
-            <span className="cursor-pointer hover:underline">
+            <span className="cursor-pointer hover:underline" onClick={() => navigate(`/categories/${product.category}`)}>
               {product.category || 'Cars'}
-            </span>{' '}
-            &gt; <span>{product.adtitle}</span>
+            </span>{' '}&gt;{' '}
+            <span>{product.adtitle}</span>
           </div>
           <div className="flex justify-between items-center">
             <button
@@ -170,7 +227,7 @@ const Preview = () => {
           </div>
         </div>
       </div>
-
+      
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         <div className="banner">
           <img src="/banner_copy.png" alt="banner" className="w-full" />
@@ -305,6 +362,54 @@ const Preview = () => {
           </p>
         </div>
       </div>
+
+      {/* Offer Modal */}
+      {isOfferModalOpen && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-[0_0_0_1000px_rgba(0,0,0,0.6)] flex items-center justify-center z-50">
+          <div className="bg-white rounded shadow-xl border border-gray-200 p-6 w-full w-md">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Make an Offer</h3>
+            <div className="mb-4">
+              <p className="text-gray-600">
+                Real Price: <span className="font-medium">₹ {product.price.toLocaleString()}</span>
+              </p>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-600 mb-1">Your Offer</label>
+              <input
+                type="number"
+                value={offerPrice}
+                onChange={handleOfferPriceChange}
+                className="border-2 rounded bg-white h-10 w-full px-3 text-lg"
+                placeholder="Enter your offer price"
+              />
+              {offerError && (
+                <p className="text-red-500 text-sm mt-2">{offerError}</p>
+              )}
+            </div>
+            <div className="flex justify-between gap-3">
+              <button
+                onClick={() => {
+                  setIsOfferModalOpen(false);
+                  setOfferPrice(product.price.toString()); // Reset to original price
+                  setOfferError('');
+                }}
+                className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMakeOfferSubmit}
+                disabled={!!offerError || !offerPrice}
+                className={`bg-blue-600 text-white font-bold py-2 px-4 rounded transition ${
+                  offerError || !offerPrice ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                }`}
+              >
+                Make Offer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
