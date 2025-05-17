@@ -3,15 +3,14 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Categories = () => {
-  const { category } = useParams(); // Get category from URL
+  const { category } = useParams();
   const [categoryData, setCategoryData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [wishlist, setWishlist] = useState([]); // Track user's wishlist
+  const [wishlist, setWishlist] = useState([]);
   const itemsPerPage = 8;
 
   const navigate = useNavigate();
 
-  // Fetch products for the selected category
   async function loadCategoryData() {
     try {
       const res = await axios.get(`http://localhost:7000/api/olx/getads?category=${(category)}`);
@@ -21,7 +20,6 @@ const Categories = () => {
     }
   }
 
-  // Fetch user's wishlist
   async function loadWishlist() {
     try {
       const user_id = localStorage.getItem('id');
@@ -34,7 +32,6 @@ const Categories = () => {
     }
   }
 
-  // Toggle wishlist status
   async function handleWishlistToggle(productId) {
     try {
       const user_id = localStorage.getItem('id');
@@ -159,7 +156,6 @@ const Categories = () => {
           </div>
         )}
 
-        {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="pagination flex flex-wrap justify-center items-center gap-2 mt-6 sm:mt-8 lg:mt-10">
             <button

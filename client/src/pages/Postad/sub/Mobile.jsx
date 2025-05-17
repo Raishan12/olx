@@ -2,20 +2,16 @@ import axios from "axios";
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Bike = () => {
+const Mobile = () => {
   const [formData, setFormData] = useState({
     brand: '',
-    bikeName: '',
-    year: '',
-    fuel: '',
-    transmission: '',
-    noOfOwners: '',
+    model: '',
+    condition: '',
     adTitle: '',
     description: '',
     price: '',
-    kmDriven: '',
     images: [],
-    category: "bikes"
+    category: "mobiles"
   });
   const [imagePreviews, setImagePreviews] = useState([]);
   const [location, setLocation] = useState({
@@ -81,18 +77,8 @@ const Bike = () => {
     setError('');
   };
 
-  const handleFuelChange = (fuel) => {
-    setFormData((prev) => ({ ...prev, fuel }));
-    setError('');
-  };
-
-  const handleTransmissionChange = (transmission) => {
-    setFormData((prev) => ({ ...prev, transmission }));
-    setError('');
-  };
-
-  const handleNoOfOwnersChange = (noOfOwners) => {
-    setFormData((prev) => ({ ...prev, noOfOwners }));
+  const handleConditionChange = (condition) => {
+    setFormData((prev) => ({ ...prev, condition }));
     setError('');
   };
 
@@ -134,15 +120,11 @@ const Bike = () => {
   const validateForm = () => {
     const requiredFields = [
       { key: 'brand', value: formData.brand },
-      { key: 'bikeName', value: formData.bikeName },
-      { key: 'year', value: formData.year },
-      { key: 'fuel', value: formData.fuel },
-      { key: 'transmission', value: formData.transmission },
-      { key: 'noOfOwners', value: formData.noOfOwners },
+      { key: 'model', value: formData.model },
+      { key: 'condition', value: formData.condition },
       { key: 'adTitle', value: formData.adTitle },
       { key: 'description', value: formData.description },
       { key: 'price', value: formData.price },
-      { key: 'kmDriven', value: formData.kmDriven },
       { key: 'state', value: location.state },
       { key: 'city', value: location.city },
       { key: 'neighborhood', value: location.neighborhood },
@@ -158,8 +140,8 @@ const Bike = () => {
       return 'Please upload at least one image.';
     }
 
-    if (isNaN(formData.kmDriven) || formData.kmDriven < 0) {
-      return 'Please enter a valid number for Kilometers Driven.';
+    if (isNaN(formData.price) || formData.price <= 0) {
+      return 'Please enter a valid price.';
     }
 
     return '';
@@ -178,7 +160,7 @@ const Bike = () => {
       const formDataToSend = new FormData();
 
       Object.entries(formData).forEach(([key, value]) => {
-        if (key !== 'images') {
+        if (key !== 'images' && key !== 'condition') {
           formDataToSend.append(key, value);
         }
       });
@@ -187,12 +169,11 @@ const Bike = () => {
       formDataToSend.append('location[city]', location.city);
       formDataToSend.append('location[neighborhood]', location.neighborhood);
       formDataToSend.append("email", localStorage.getItem("email"));
+      formDataToSend.append("owner", formData.condition);
 
       formData.images.forEach((image) => {
         formDataToSend.append('file', image);
       });
-
-      console.log('Posting ad:', { ...formData, location });
 
       const response = await axios.post(`http://localhost:7000/api/olx/uploadads/${user_id}`, formDataToSend, {
         headers: {
@@ -200,7 +181,6 @@ const Bike = () => {
         },
       });
 
-      console.log('Response:', response);
       alert(response.data.message);
       navigate('/');
     } catch (error) {
@@ -230,7 +210,7 @@ const Bike = () => {
           <div className="mb-4">
             <h2 className="text-base font-bold uppercase p-2">Selected Category</h2>
             <div className="flex justify-between items-center p-2">
-              <span className="text-sm text-gray-600">Bikes / Bikes</span>
+              <span className="text-sm text-gray-600">Mobiles / Mobile Phones</span>
               <span
                 className="text-sm text-blue-600 hover:underline cursor-pointer"
                 onClick={() => navigate('/sell')}
@@ -239,11 +219,9 @@ const Bike = () => {
               </span>
             </div>
           </div>
- 
           <div className="mb-4">
             <h2 className="text-base font-bold uppercase p-2">Include Some Details</h2>
             <div className="p-2 space-y-4">
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Brand *
@@ -257,9 +235,8 @@ const Bike = () => {
                   >
                     <option value="">Select Brand</option>
                     {[
-                      'Bajaj', 'Hero', 'Honda', 'Royal Enfield', 'Yamaha',
-                      'TVS', 'Suzuki', 'KTM', 'Harley-Davidson', 'Triumph',
-                      'BMW Motorrad', 'Ducati', 'Kawasaki', 'Benelli', 'Jawa'
+                      'Apple', 'Samsung', 'Xiaomi', 'OnePlus', 'Oppo', 'Vivo', 'Realme',
+                      'Google', 'Nokia', 'Motorola', 'Sony', 'Asus', 'Lenovo', 'Huawei'
                     ].map((brand) => (
                       <option key={brand} value={brand}>{brand}</option>
                     ))}
@@ -269,112 +246,39 @@ const Bike = () => {
                   </span>
                 </div>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bike Name *
+                  Model *
                 </label>
                 <input
                   type="text"
-                  name="bikeName"
-                  value={formData.bikeName}
+                  name="model"
+                  value={formData.model}
                   onChange={handleInputChange}
-                  placeholder="Enter Bike Name (e.g., Pulsar, Bullet)"
+                  placeholder="Enter Model (e.g., iPhone 13, Galaxy S21)"
                   className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Year *
-                </label>
-                <input
-                  type="number"
-                  name="year"
-                  value={formData.year}
-                  onChange={handleInputChange}
-                  placeholder="Enter Bike Year"
-                  className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Kilometers Driven *
-                </label>
-                <input
-                  type="number"
-                  name="kmDriven"
-                  value={formData.kmDriven}
-                  onChange={handleInputChange}
-                  placeholder="Enter Kilometers Driven"
-                  className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fuel *
+                  Condition *
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {['Petrol', 'Electric'].map((fuel) => (
+                  {['New', 'Used', 'Refurbished'].map((condition) => (
                     <button
-                      key={fuel}
-                      onClick={() => handleFuelChange(fuel)}
+                      key={condition}
+                      onClick={() => handleConditionChange(condition)}
                       className={`px-4 py-1 border rounded-md text-sm ${
-                        formData.fuel === fuel
+                        formData.condition === condition
                           ? 'bg-gray-200 border-gray-400'
                           : 'border-gray-300 hover:bg-gray-100'
                       }`}
                     >
-                      {fuel}
+                      {condition}
                     </button>
                   ))}
                 </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Transmission *
-                </label>
-                <div className="flex gap-2">
-                  {['Automatic', 'Manual'].map((transmission) => (
-                    <button
-                      key={transmission}
-                      onClick={() => handleTransmissionChange(transmission)}
-                      className={`px-4 py-1 border rounded-md text-sm ${
-                        formData.transmission === transmission
-                          ? 'bg-gray-200 border-gray-400'
-                          : 'border-gray-300 hover:bg-gray-100'
-                      }`}
-                    >
-                      {transmission}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Number of Owners *
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {['First', 'Second', 'Third', '4th+'].map((noOfOwners) => (
-                    <button
-                      key={noOfOwners}
-                      onClick={() => handleNoOfOwnersChange(noOfOwners)}
-                      className={`px-4 py-1 border rounded-md text-sm ${
-                        formData.noOfOwners === noOfOwners
-                          ? 'bg-gray-200 border-gray-400'
-                          : 'border-gray-300 hover:bg-gray-100'
-                      }`}
-                    >
-                      {noOfOwners}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Ad Title *
@@ -388,7 +292,6 @@ const Bike = () => {
                   className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Description *
@@ -404,11 +307,9 @@ const Bike = () => {
               </div>
             </div>
           </div>
-
           <div className="mb-4">
             <h2 className="text-base font-bold uppercase p-2">Set a Price</h2>
             <div className="p-2 space-y-4">
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Price *
@@ -424,7 +325,6 @@ const Bike = () => {
               </div>
             </div>
           </div>
-
           <div className="mb-4">
             <h2 className="text-base font-bold uppercase p-2">Upload Photos</h2>
             <div className="p-2">
@@ -482,11 +382,9 @@ const Bike = () => {
               </div>
             </div>
           </div>
-
           <div className="mb-4">
             <h2 className="text-base font-bold uppercase p-2">Confirm Your Location</h2>
             <div className="p-2 space-y-4">
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   State *
@@ -510,7 +408,6 @@ const Bike = () => {
                   </span>
                 </div>
               </div>
-
               {location.state && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -538,7 +435,6 @@ const Bike = () => {
                   </div>
                 </div>
               )}
-
               {location.city && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -569,7 +465,6 @@ const Bike = () => {
               )}
             </div>
           </div>
-
           <div className="p-2">
             <button
               onClick={handlePostAd}
@@ -578,10 +473,10 @@ const Bike = () => {
               Post Your Ad
             </button>
           </div>
-        </div> 
+        </div>
       </div>
     </div>
   );
 };
 
-export default Bike;
+export default Mobile;

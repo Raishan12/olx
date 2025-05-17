@@ -3,10 +3,8 @@ import React from 'react'
 const Footer = () => {
     return (
         <footer className="w-full bg-gray-100">
-            {/* Upper Footer */}
             <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-6 sm:py-8 lg:py-10">
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8">
-                    {/* Popular Locations */}
                     <div>
                         <h4 className="text-sm sm:text-base font-bold mb-3">POPULAR LOCATIONS</h4>
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer mb-2">Kolkata</p>
@@ -14,7 +12,6 @@ const Footer = () => {
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer mb-2">Chennai</p>
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer">Pune</p>
                     </div>
-                    {/* Trending Locations */}
                     <div>
                         <h4 className="text-sm sm:text-base font-bold mb-3">TRENDING LOCATIONS</h4>
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer mb-2">Bhubaneshwar</p>
@@ -22,13 +19,11 @@ const Footer = () => {
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer mb-2">Chandigarh</p>
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer">Nashik</p>
                     </div>
-                    {/* About Us */}
                     <div>
                         <h4 className="text-sm sm:text-base font-bold mb-3">ABOUT US</h4>
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer mb-2">Tech@OLX</p>
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer">Careers</p>
                     </div>
-                    {/* OLX */}
                     <div>
                         <h4 className="text-sm sm:text-base font-bold mb-3">OLX</h4>
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer mb-2">Blog</p>
@@ -37,7 +32,6 @@ const Footer = () => {
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer mb-2">Legal & Privacy information</p>
                         <p className="text-xs sm:text-sm text-[rgb(141,145,149)] hover:text-black cursor-pointer">Vulnerability Disclosure Program</p>
                     </div>
-                    {/* Follow Us */}
                     <div>
                         <h4 className="text-sm sm:text-base font-bold mb-3">FOLLOW US</h4>
                         <div className="flex gap-3 mb-4">
@@ -74,7 +68,6 @@ const Footer = () => {
                 </div>
             </div>
 
-            {/* Lower Footer */}
             <div className="bg-[rgb(0,72,150)] text-white">
                 <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-6 sm:py-8">
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 sm:gap-6 mb-4 sm:mb-6">

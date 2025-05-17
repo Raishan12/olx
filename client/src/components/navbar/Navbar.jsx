@@ -26,15 +26,37 @@ const Navbar = () => {
     }
   };
 
-  const handlegotoprofile = () =>{
-    navigate("/profile")
-  }
+  const fetchUserDetails = async () => {
+    try {
+      const user_id = localStorage.getItem('id');
+      if (!user_id) {
+        throw new Error('User ID not found.');
+      }
+      const res = await axios.get(`http://localhost:7000/api/olx/getUser/${user_id}`);
+      const dbUser = res.data;
+      setUserdata({
+        username: dbUser.username || user.name || '',
+        email: dbUser.email || user.email || ''
+      });
+    } catch (error) {
+      console.error('Fetch user details error:', error);
+      // Fallback to Auth0 data
+      setUserdata({
+        username: user.name || '',
+        email: user.email || ''
+      });
+    }
+  };
+
+  const handlegotoprofile = () => {
+    navigate("/profile");
+  };
 
   useEffect(() => {
     if (isAuthenticated && user) {
       const userData = { username: user.name, email: user.email };
-      setUserdata(userData);
       goToBackend(userData);
+      fetchUserDetails();
     }
   }, [isAuthenticated, user]);
 
@@ -108,8 +130,7 @@ const Navbar = () => {
 
             {/* Right Section */}
             <div
-              className={`${isMenuOpen ? "flex" : "hidden"
-                } md:flex flex-col md:flex-row gap-3 items-center w-full md:w-auto mt-3 md:mt-0`}
+              className={`${isMenuOpen ? "flex" : "hidden"} md:flex flex-col md:flex-row gap-3 items-center w-full md:w-auto mt-3 md:mt-0`}
             >
               <div className="flex gap-2 items-center">
                 <p className="text-sm">ENGLISH</p>
@@ -133,14 +154,14 @@ const Navbar = () => {
                       <div className="p-4 bg-white">
                         <div className="flex gap-3 items-center">
                           <img src={user.picture} alt="User" className="w-12 rounded-full" />
-                          <h2 className="text-lg font-bold">{user.name}</h2>
+                          <h2 className="text-lg font-bold">{userdata.username}</h2>
                         </div>
-                        <div onClick={()=>handlegotoprofile()} className="bg-blue-800 text-white font-bold p-2 mt-4 rounded text-center hover:bg-white hover:text-blue-800" >
+                        <div onClick={handlegotoprofile} className="bg-blue-800 text-white font-bold p-2 mt-4 rounded text-center hover:bg-white hover:text-blue-800">
                           <p>View and edit profile</p>
                         </div>
                       </div>
                       <div className="bg-white mt-1">
-                        <div className="flex p-4 gap-2 hover:bg-blue-100">
+                        <div className="flex p-4 gap-2 hover:bg-blue-100" onClick={() => navigate('/myads')}>
                           <img src="/svg/myAds.svg" alt="My Ads" />
                           <p>My Ads</p>
                         </div>
@@ -203,18 +224,16 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-
-      <div className="relative sticky h-10 shadow-sm content-center">
+      <div className="relative sticky w-1/1 h-10 shadow-sm content-center">
         <div className='flex gap-9 justify-around mx-50'>
           <div className='flex gap-2'>
             <h2 className='font-bold'>ALL CATEGORIES</h2>
             <img src="/svg/down.svg" alt="" className='' />
           </div>
-
           <div className='flex gap-5'>
             <p className='cursor-pointer' onClick={() => navigate('/categories/cars')}>Cars</p>
             <p className='cursor-pointer' onClick={() => navigate('/categories/bikes')}>Bikes</p>
-            <p className='cursor-pointer' onClick={() => navigate('/categories/Mobile Phones')}>Mobile Phones</p>
+            <p className='cursor-pointer' onClick={() => navigate('/categories/Mobile Phones')}>Mobiles</p>
             <p className='cursor-pointer' onClick={() => navigate('/categories/Electronics & Appliances')}>Electronics & Appliances</p>
           </div>
         </div>

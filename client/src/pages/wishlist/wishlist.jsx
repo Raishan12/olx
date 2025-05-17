@@ -4,13 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 const Wishlist = () => {
   const [wishlistData, setWishlistData] = useState([]);
-  const [wishlistIds, setWishlistIds] = useState([]); // Track wishlist item IDs
+  const [wishlistIds, setWishlistIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
   const navigate = useNavigate();
 
-  // Fetch user's wishlist
   async function loadWishlist() {
     try {
       const user_id = localStorage.getItem('id');
@@ -28,7 +27,6 @@ const Wishlist = () => {
     }
   }
 
-  // Toggle wishlist status
   async function handleWishlistToggle(productId) {
     try {
       const user_id = localStorage.getItem('id');
@@ -45,7 +43,6 @@ const Wishlist = () => {
           setWishlistData(wishlistData.filter((item) => item._id.toString() !== productId));
           setWishlistIds(wishlistIds.filter((id) => id !== productId));
         } else {
-          // Fetch the product to add to wishlistData
           const productRes = await axios.get(`http://localhost:7000/api/olx/getproduct/${productId}`);
           setWishlistData([...wishlistData, productRes.data]);
           setWishlistIds([...wishlistIds, productId]);
@@ -91,9 +88,13 @@ const Wishlist = () => {
         </div>
 
         {wishlistData.length === 0 && (
-          <div className="text-center py-8 sm:py-10 bg-gray-100 rounded-lg">
+          <div className="text-center py-8 sm:py-10 rounded-lg">
+            <img src="/webp/no-favorites.webp" alt="" className=' mx-auto h-50 w-auto ' />
+            <h2 className=' text-xl font-bold text-gray-700 '>
+              You haven't liked any ads yet
+            </h2>
             <p className="text-lg sm:text-xl text-gray-500">
-              Your wishlist is empty
+            Like ads and share<br />them with the world
             </p>
             <button
               className="mt-4 bg-blue-500 hover:bg-white hover:text-blue-500 hover:border hover:border-2 hover:border=blue-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
@@ -150,7 +151,6 @@ const Wishlist = () => {
           </div>
         )}
 
-        {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="pagination flex flex-wrap justify-center items-center gap-2 mt-6 sm:mt-8 lg:mt-10">
             <button

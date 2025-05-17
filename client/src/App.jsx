@@ -13,6 +13,8 @@ import Wishlist from './pages/wishlist/wishlist'
 import Categories from './pages/categories/Categories'
 import Viewprofile from './pages/viewprofile/Viewprofile'
 import Editprofiledetails from './pages/editprofile/Editprofiledetails'
+import Myads from './pages/myads/Myads'
+import Mobile from './pages/Postad/sub/Mobile'
 
 const App = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -33,7 +35,6 @@ const App = () => {
           )
         }
 
-        {/* <Navbar onSearch={handleSearch} /> */}
         <Routes>
           <Route path="/" element={<Home searchResults={searchQuery} />} />
           <Route path='/post' element={<Postad />} />
@@ -45,6 +46,8 @@ const App = () => {
           <Route path="/categories/:category" element={<Categories />} />
           <Route path='/profile' element={<Viewprofile />} />
           <Route path="/editprofiledetails" element={<Editprofiledetails />} />
+          <Route path="/myads" element={<Myads />} />
+          <Route path="/mobile" element={<Mobile />} />
           </Routes>
         <Footer />
       {/* </BrowserRouter> */}

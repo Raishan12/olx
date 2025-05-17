@@ -8,7 +8,7 @@ const Home = ({ searchResults }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [wishlist, setWishlist] = useState([]); // Track user's wishlist
+  const [wishlist, setWishlist] = useState([]);
   const itemsPerPage = 8;
 
   const navigate = useNavigate();
@@ -22,7 +22,6 @@ const Home = ({ searchResults }) => {
     }
   }
 
-  // Fetch user's wishlist
   async function loadWishlist() {
     try {
       const user_id = localStorage.getItem('id');
@@ -35,7 +34,6 @@ const Home = ({ searchResults }) => {
     }
   }
 
-  // Toggle wishlist status
   async function handleWishlistToggle(productId) {
     try {
       const user_id = localStorage.getItem('id');
@@ -74,12 +72,8 @@ const Home = ({ searchResults }) => {
         (item.adtitle && item.adtitle.toLowerCase().includes(searchTermLower)) ||
         (item.description && item.description.toLowerCase().includes(searchTermLower)) ||
         (item.category && item.category.toLowerCase().includes(searchTermLower)) ||
-        (item.location &&
-          item.location[0]?.city &&
-          item.location[0].city.toLowerCase().includes(searchTermLower)) ||
-        (item.location &&
-          item.location[0]?.neighbourhood &&
-          item.location[0].neighbourhood.toLowerCase().includes(searchTermLower))
+        (item.location?.city && item.location.city.toLowerCase().includes(searchTermLower)) ||
+        (item.location?.neighbourhood && item.location.neighbourhood.toLowerCase().includes(searchTermLower))
       );
     });
 
@@ -137,7 +131,6 @@ const Home = ({ searchResults }) => {
               ? `Search Results for "${searchTerm}"`
               : 'Fresh recommendations'}
           </h2>
-
           {isSearching && (
             <button
               className="mt-2 sm:mt-0 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded text-sm sm:text-base"
@@ -147,7 +140,6 @@ const Home = ({ searchResults }) => {
             </button>
           )}
         </div>
-
         {isSearching && filteredData.length === 0 && (
           <div className="text-center py-8 sm:py-10 bg-gray-100 rounded-lg">
             <p className="text-lg sm:text-xl text-gray-500">
@@ -161,7 +153,6 @@ const Home = ({ searchResults }) => {
             </button>
           </div>
         )}
-
         <div className="cards grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
           {paginatedData.map((card) => (
             <div
@@ -183,32 +174,29 @@ const Home = ({ searchResults }) => {
                 />
               </div>
               <img
-                src={`http://localhost:7000/images/${card.photos[0]}`}
+                src={card.photos && card.photos.length > 0 ? `http://localhost:7000/images/${card.photos[0]}` : 'https://via.placeholder.com/150?text=No+Image'}
                 className="w-full h-40 object-contain rounded"
                 alt={card.adtitle}
               />
               <div className="card-body p-2">
                 <h5 className="card-price text-lg sm:text-xl lg:text-2xl font-extrabold">
-                  ₹ {card.price}
+                  ₹ {parseFloat(card.price).toLocaleString()}
                 </h5>
                 <p className="card-title text-base sm:text-lg text-gray-600 truncate">
                   {card.adtitle}
                 </p>
                 <p className="card-title text-xs sm:text-sm text-gray-500 font-light truncate">
-                  {card.location[0].neighbourhood}, {card.location[0].city}
+                  {card.location?.neighbourhood}, {card.location?.city}
                 </p>
               </div>
             </div>
           ))}
         </div>
-
         {paginatedData.length === 0 && !isSearching && (
           <div className="text-center py-6 sm:py-8">
             <p className="text-lg sm:text-xl text-gray-500">No products available</p>
           </div>
         )}
-
-        {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="pagination flex flex-wrap justify-center items-center gap-2 mt-6 sm:mt-8 lg:mt-10">
             <button
@@ -218,7 +206,6 @@ const Home = ({ searchResults }) => {
             >
               Prev
             </button>
-
             {[...Array(totalPages)].map((_, index) => (
               <button
                 key={index}
@@ -232,7 +219,6 @@ const Home = ({ searchResults }) => {
                 {index + 1}
               </button>
             ))}
-
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}

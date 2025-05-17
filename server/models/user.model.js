@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   wishlist: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ad" }], default: [] },
   otp: { type: Number, default: null },
   about: { type: String, default: null },
+  date: { type: Date, default: Date.now, required: true }
 });
 
 export default mongoose.model.Users || mongoose.model("User", userSchema);
