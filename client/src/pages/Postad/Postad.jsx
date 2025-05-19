@@ -11,11 +11,12 @@ const Postad = () => {
 
   const subcategories = {
     Cars: ['Cars'],
-    Mobiles: ['Mobile Phones', 'Accessories', 'Tablets'],
+    Mobiles: ['Mobile Phones'],
     Bike: ['Bikes'],
-    'Electronics & Appliances': ['TVs, Video-Audio', 'Computers & Laptops', 'Cameras & Lenses'],
+    
   };
-
+// 'Electronics & Appliances': ['TVs, Video-Audio', 'Computers & Laptops', 'Cameras & Lenses'],
+// , 'Accessories', 'Tablets'
   const handleSubcategoryClick = (subcategory) => {
     switch (subcategory) {
       case 'Cars':

@@ -233,7 +233,7 @@ const Bike = () => {
               <span className="text-sm text-gray-600">Bikes / Bikes</span>
               <span
                 className="text-sm text-blue-600 hover:underline cursor-pointer"
-                onClick={() => navigate('/sell')}
+                onClick={() => navigate('/post')}
               >
                 Change
               </span>

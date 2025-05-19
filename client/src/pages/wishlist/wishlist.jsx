@@ -138,7 +138,7 @@ const Wishlist = () => {
                   {card.adtitle}
                 </p>
                 <p className="card-title text-xs sm:text-sm text-gray-500 font-light truncate">
-                  {card.location[0].neighbourhood}, {card.location[0].city}
+                  {card.location.neighbourhood}, {card.location.city}
                 </p>
               </div>
             </div>

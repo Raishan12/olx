@@ -27,29 +27,28 @@ const App = () => {
   return (
     <>
       {/* <BrowserRouter> */}
-        {
-          location.pathname === "/post" ? (
-            <Nav />
-          ) : (
-            <Navbar onSearch={handleSearch} />
-          )
-        }
-
-        <Routes>
-          <Route path="/" element={<Home searchResults={searchQuery} />} />
-          <Route path='/post' element={<Postad />} />
-          <Route path='/login/:id' element={<Login />} />
-          <Route path='/addcar' element={<Car />} />
-          <Route path='/bike' element={<Bike />} />
-          <Route path='/preview/:productId' element={<Preview />} />
-          <Route path='/wishlist' element={<Wishlist />} />
-          <Route path="/categories/:category" element={<Categories />} />
-          <Route path='/profile' element={<Viewprofile />} />
-          <Route path="/editprofiledetails" element={<Editprofiledetails />} />
-          <Route path="/myads" element={<Myads />} />
-          <Route path="/mobile" element={<Mobile />} />
-          </Routes>
-        <Footer />
+      {
+        ["/post", "/addcar", "/bike", "/mobile"].includes(location.pathname) ? (
+          <Nav />
+        ) : (
+          <Navbar onSearch={handleSearch} />
+        )
+      }
+      <Routes>
+        <Route path="/" element={<Home searchResults={searchQuery} />} />
+        <Route path='/post' element={<Postad />} />
+        <Route path='/login/:id' element={<Login />} />
+        <Route path='/addcar' element={<Car />} />
+        <Route path='/bike' element={<Bike />} />
+        <Route path='/preview/:productId' element={<Preview />} />
+        <Route path='/wishlist' element={<Wishlist />} />
+        <Route path="/categories/:category" element={<Categories />} />
+        <Route path='/profile' element={<Viewprofile />} />
+        <Route path="/editprofiledetails" element={<Editprofiledetails />} />
+        <Route path="/myads" element={<Myads />} />
+        <Route path="/mobile" element={<Mobile />} />
+      </Routes>
+      <Footer />
       {/* </BrowserRouter> */}
 
     </>

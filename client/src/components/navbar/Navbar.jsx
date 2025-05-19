@@ -6,7 +6,8 @@ import LogoutButton from '../../pages/logout/Logout';
 import axios from 'axios';
 
 const Navbar = () => {
-  const [locationval, setLocation] = useState("India");
+  const [searchitem, setSearchItem] = useState("");
+  const [locationVal, setLocationVal] = useState("India")
   const { user, isAuthenticated } = useAuth0();
   const [isDropDown, setIsDropDown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,7 +41,6 @@ const Navbar = () => {
       });
     } catch (error) {
       console.error('Fetch user details error:', error);
-      // Fallback to Auth0 data
       setUserdata({
         username: user.name || '',
         email: user.email || ''
@@ -50,6 +50,20 @@ const Navbar = () => {
 
   const handlegotoprofile = () => {
     navigate("/profile");
+  };
+
+  const handleSearch = () => {
+    if (searchitem.trim()) {
+      navigate(`/?search=${encodeURIComponent(searchitem.trim())}`);
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
   };
 
   useEffect(() => {
@@ -65,7 +79,6 @@ const Navbar = () => {
       <div className="bg-gray-200 border-b-4 border-white shadow-sm sticky top-0 z-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col md:flex-row md:items-center gap-3 w-full">
-            {/* Logo and Hamburger */}
             <div className="flex justify-between items-center w-full md:w-auto">
               <a href="/"><img src="/svg/vite.svg" alt="OLX Logo" className="h-10 md:h-12" /></a>
               <button
@@ -89,15 +102,15 @@ const Navbar = () => {
               </button>
             </div>
 
-            {/* Location and Search Inputs */}
             <div className={`flex flex-col md:flex-row gap-3 ${isMenuOpen ? 'flex' : 'hidden md:flex'} w-full`}>
               <div className="relative w-full md:w-1/4">
                 <input
                   type="search"
                   name="location"
                   id="location"
-                  value={locationval}
-                  onChange={(e) => setLocation(e.target.value)}
+                  value={locationVal}
+                  onChange={(e) => setLocationVal(e.target.value)}
+                  placeholder="Search location"
                   className="border-2 rounded bg-white h-12 pl-8 w-full bg-[url('/svg/search.svg')] bg-no-repeat bg-[position:4px_center]"
                 />
               </div>
@@ -107,9 +120,15 @@ const Navbar = () => {
                   name="search"
                   id="search"
                   placeholder="Search 'Cars'"
+                  onKeyPress={handleSearchKeyPress}
+                  onChange={(e) => setSearchItem(e.target.value)}
+                  value={searchitem}
                   className="border-2 rounded-l bg-white h-12 w-full pl-4"
                 />
-                <button className="bg-black h-12 w-12 rounded-r flex items-center justify-center">
+                <button
+                  onClick={handleSearch}
+                  className="bg-black h-12 w-12 rounded-r flex items-center justify-center"
+                >
                   <svg
                     fill="none"
                     stroke="white"
@@ -128,7 +147,6 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Right Section */}
             <div
               className={`${isMenuOpen ? "flex" : "hidden"} md:flex flex-col md:flex-row gap-3 items-center w-full md:w-auto mt-3 md:mt-0`}
             >
@@ -233,8 +251,8 @@ const Navbar = () => {
           <div className='flex gap-5'>
             <p className='cursor-pointer' onClick={() => navigate('/categories/cars')}>Cars</p>
             <p className='cursor-pointer' onClick={() => navigate('/categories/bikes')}>Bikes</p>
-            <p className='cursor-pointer' onClick={() => navigate('/categories/Mobile Phones')}>Mobiles</p>
-            <p className='cursor-pointer' onClick={() => navigate('/categories/Electronics & Appliances')}>Electronics & Appliances</p>
+            <p className='cursor-pointer' onClick={() => navigate('/categories/mobiles')}>Mobiles</p>
+            {/* <p className='cursor-pointer' onClick={() => navigate('/categories/Electronics & Appliances')}>Electronics & Appliances</p> */}
           </div>
         </div>
       </div>

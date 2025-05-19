@@ -91,7 +91,7 @@ const Myads = () => {
         <button className="bg-blue-600 text-white px-4 py-2 rounded">Show me packages</button>
       </div>
 
-      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+      {/* <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <input
           type="text"
           placeholder="Search by Ad Title"
@@ -104,7 +104,7 @@ const Myads = () => {
           <button className="px-3 py-1 bg-gray-200 rounded-full">Pending Ads (0)</button>
           <button className="px-3 py-1 bg-gray-200 rounded-full">Moderated Ads (0)</button>
         </div>
-      </div>
+      </div> */}
 
       {ads.map((ad) => (
         <div
@@ -119,7 +119,7 @@ const Myads = () => {
             />
             <div className="flex-1">
               <p className="text-xs text-gray-400 font-medium">
-                FROM: {new Date(ad.createdAt).toLocaleDateString()} TO: {new Date(ad.expiryDate || Date.now()).toLocaleDateString()}
+                FROM: {new Date(ad.date).toLocaleDateString()} TO: {new Date(ad.dateto).toLocaleDateString()}
               </p>
               <h4 className="text-lg font-bold">{ad.adtitle}</h4>
               <p className="text-sm text-gray-500">{ad.location?.neighbourhood}, {ad.location?.city}</p>

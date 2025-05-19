@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const Home = ({ searchResults }) => {
+const Home = () => {
   const [allData, setAllData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -12,6 +12,7 @@ const Home = ({ searchResults }) => {
   const itemsPerPage = 8;
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   async function loadData() {
     try {
@@ -87,6 +88,7 @@ const Home = ({ searchResults }) => {
     setIsSearching(false);
     setSearchTerm('');
     setCurrentPage(1);
+    navigate('/'); // Clear query parameter
   };
 
   const handlePageChange = (newPage) => {
@@ -114,10 +116,10 @@ const Home = ({ searchResults }) => {
   }, []);
 
   useEffect(() => {
-    if (typeof searchResults === 'string') {
-      filterData(searchResults);
-    }
-  }, [searchResults, allData]);
+    const queryParams = new URLSearchParams(location.search);
+    const searchQuery = queryParams.get('search') || '';
+    filterData(searchQuery);
+  }, [location.search, allData]);
 
   const paginatedData = getPaginatedData();
   const totalPages = getTotalPages();
